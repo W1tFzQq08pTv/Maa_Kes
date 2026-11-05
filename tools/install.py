@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import platform
 import shutil
 import sys
 
@@ -168,6 +169,22 @@ if __name__ == "__main__":
         pass
 
     try:
+        # 同版本的 PyPI wheel 与桌面发行库也可能产生不同的资源 hash。
+        # 本机构建时使用产物实际加载的库；跨平台打包仍沿用 Python 运行库。
+        host_os = {"Darwin": "macos", "Windows": "win", "Linux": "linux"}.get(
+            platform.system()
+        )
+        host_arch = {
+            "arm64": "aarch64",
+            "aarch64": "aarch64",
+            "AMD64": "x86_64",
+            "x86_64": "x86_64",
+        }.get(platform.machine())
+        if os_name != "android" and os_name == host_os and arch == host_arch:
+            from maa.library import Library
+
+            Library.open(install_path / "runtimes" / get_dotnet_platform_tag() / "native")
+
         sys.path.insert(0, str(Path(__file__).resolve().parent / "ci"))
         from gen_resource_hash import apply_resource_hashes
 
