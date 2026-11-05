@@ -364,6 +364,11 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+.venv/
+
+# macOS 与本地构建启动入口
+.DS_Store
+/launch-local.command
 
 # Cake - Uncomment if you are using it
 # tools/**
